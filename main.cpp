@@ -7,10 +7,7 @@
 #include "rc.h"
 #include <filesystem>
 
-using tstring = std::basic_string<TCHAR>;
 
-std::unique_ptr<Gdiplus::Image> img;
-tstring fileName;
 
 tstring findImageName(const tstring& path)
 {
@@ -38,27 +35,25 @@ void main_window::on_paint(HDC hdc)
 
 
 	if (!fileName.empty()) {
+		Gdiplus::Font font(L"Arial", 25, Gdiplus::FontStyleBold, Gdiplus::UnitPixel);
+		Gdiplus::SolidBrush textBrush(Gdiplus::Color::White);
+		Gdiplus::SolidBrush shadowBrush(Gdiplus::Color(50, 0, 0, 0));
 
-		Font font(L"Arial", 25, FontStyleBold, UnitPixel);
-		SolidBrush textBrush(Color::White);
+		Gdiplus::StringFormat format;
+		format.SetAlignment(Gdiplus::StringAlignmentCenter);
+		format.SetLineAlignment(Gdiplus::StringAlignmentNear);
 
-		SolidBrush shadowBrush(Color(50, 0, 0, 0));
+		float x = rc.right / 2.0f;
+		float y = rc.bottom - 35;
 
+		Gdiplus::RectF layoutRect(0, y, rc.right, 35); 
 
-		RectF boundingBox;
-		graphics.MeasureString(fileName.c_str(), -1, &font, PointF(0, 0), &boundingBox);
+		
+		Gdiplus::RectF shadowLayoutRect(2, y + 2, rc.right, 35);
+		graphics.DrawString(fileName.c_str(), -1, &font, shadowLayoutRect, &format, &shadowBrush);
 
-
-		float x = (rc.right - boundingBox.Width) / 2;
-		float y = rc.bottom - boundingBox.Height - 10;
-
-
-		PointF shadowPosition(x + 2, y + 2);
-		graphics.DrawString(fileName.c_str(), -1, &font, shadowPosition, nullptr, &shadowBrush);
-
-
-		PointF textPosition(x, y);
-		graphics.DrawString(fileName.c_str(), -1, &font, textPosition, nullptr, &textBrush);
+		
+		graphics.DrawString(fileName.c_str(), -1, &font, layoutRect, &format, &textBrush);
 	}
 
 
@@ -84,9 +79,6 @@ void main_window::on_command(int id)
 		ofn.nMaxFile = sizeof(file_name);
 		ofn.lpstrFilter = _T("Image Files\0*.jpg;*.jpeg;*.bmp;*.gif;*.png;*.tiff;*.emf\0All Files\0*.*\0");
 		ofn.nFilterIndex = 1;
-		ofn.lpstrFileTitle = nullptr;
-		ofn.nMaxFileTitle = 0;
-		ofn.lpstrInitialDir = nullptr;
 		ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 		if (GetOpenFileName(&ofn))
 		{
