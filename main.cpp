@@ -41,15 +41,14 @@ void main_window::on_paint(HDC hdc)
 
 		Gdiplus::StringFormat format;
 		format.SetAlignment(Gdiplus::StringAlignmentCenter);
-		format.SetLineAlignment(Gdiplus::StringAlignmentNear);
+		format.SetLineAlignment(Gdiplus::StringAlignmentFar);
 
-		float x = rc.right / 2.0f;
-		float y = rc.bottom - 35;
+	
 
-		Gdiplus::RectF layoutRect(0, y, rc.right, 35); 
+		Gdiplus::RectF layoutRect(0, 0, rc.right, rc.bottom); 
 
 		
-		Gdiplus::RectF shadowLayoutRect(2, y + 2, rc.right, 35);
+		Gdiplus::RectF shadowLayoutRect(2, 2, rc.right, rc.bottom);
 		graphics.DrawString(fileName.c_str(), -1, &font, shadowLayoutRect, &format, &shadowBrush);
 
 		
